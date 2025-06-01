@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "franc": "^6.2.0",
+    "google-translate-api-browser": "^5.0.0",
+    "i18next": "^25.0.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-i18next": "^15.5.1"
+  },
+  "devDependencies": {
+    "json-loader": "^0.5.7"
+  }
+}
