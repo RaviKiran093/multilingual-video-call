@@ -3,27 +3,22 @@ const http = require("http");
 const cors = require("cors");
 const { translate } = require('@vitalets/google-translate-api');
 const { Server } = require("socket.io");
-const path = require("path");
 
 const app = express();
 const server = http.createServer(app);
-const PORT = process.env.PORT || 4000;
 
-// CORS for development (adjust later for production)
+const PORT = 4000;
+
 app.use(cors({
-  origin: "*",
+  origin: "http://localhost:3000",
   methods: ["GET", "POST"],
   credentials: true
 }));
-
 app.use(express.json());
-
-// Serve static files from React build folder
-app.use(express.static(path.join(__dirname, 'client/build')));
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -89,7 +84,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// API route
 app.post("/api/translate", async (req, res) => {
   const { text, targetLanguage } = req.body;
   try {
@@ -103,9 +97,7 @@ app.post("/api/translate", async (req, res) => {
   }
 });
 
-// Catch-all to serve React app for any non-API route
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
-});
+app.get("/", (req, res) => res.send("Welcome to the WebSocket and HTTP server!"));
+app.use((req, res) => res.status(404).send("404 - Not Found"));
 
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
