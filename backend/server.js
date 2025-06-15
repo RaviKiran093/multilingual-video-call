@@ -101,3 +101,13 @@ app.get("/", (req, res) => res.send("Welcome to the WebSocket and HTTP server!")
 app.use((req, res) => res.status(404).send("404 - Not Found"));
 
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+const path = require("path");
+
+if (process.env.NODE_ENV === "production") {
+  const clientBuildPath = path.join(__dirname, "../client/build");
+  app.use(express.static(clientBuildPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(clientBuildPath, "index.html"));
+  });
+}
