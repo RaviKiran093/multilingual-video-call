@@ -1,27 +1,36 @@
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
+const path = require("path");
 const { translate } = require('@vitalets/google-translate-api');
 const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+const PORT = process.env.PORT || 4000;
 
-const PORT = 4000;
-
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST"],
-  credentials: true
-}));
-app.use(express.json());
-
-const io = new Server(server, {
-  cors: {
+// CORS setup based on environment
+if (process.env.NODE_ENV === "production") {
+  app.use(cors());
+} else {
+  app.use(cors({
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true
-  }
+  }));
+}
+
+app.use(express.json());
+
+// Socket.io CORS setup based on environment
+const io = new Server(server, {
+  cors: process.env.NODE_ENV === "production"
+    ? {}
+    : {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true
+      }
 });
 
 const roomUsers = {};
@@ -51,8 +60,8 @@ io.on("connection", (socket) => {
       io.to(data.to).emit("signal", { signal: data.signal, from: socket.id });
     });
 
-    socket.on('subtitle', ({ text, roomId, userId, lang }) => {
-      socket.to(roomId).emit('subtitle', { text, userId, lang });
+    socket.on("subtitle", ({ text, roomId, userId, lang }) => {
+      socket.to(roomId).emit("subtitle", { text, userId, lang });
     });
 
     socket.on("chat-message", ({ roomId, message, userId }) => {
@@ -100,9 +109,7 @@ app.post("/api/translate", async (req, res) => {
 app.get("/", (req, res) => res.send("Welcome to the WebSocket and HTTP server!"));
 app.use((req, res) => res.status(404).send("404 - Not Found"));
 
-server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-const path = require("path");
-
+// Serve frontend build in production
 if (process.env.NODE_ENV === "production") {
   const clientBuildPath = path.join(__dirname, "../client/build");
   app.use(express.static(clientBuildPath));
@@ -111,3 +118,5 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
 }
+
+server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
