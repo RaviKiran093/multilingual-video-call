@@ -120,5 +120,9 @@ if (process.env.NODE_ENV === "production") {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
 }
+else
+{
+  app.get("/", (req, res) => res.send("Welcome to the WebSocket and HTTP server!"));
+}
 
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
