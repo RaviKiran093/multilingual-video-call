@@ -5,6 +5,7 @@ const cors = require("cors");
 const { translate } = require('@vitalets/google-translate-api');
 const { Server } = require("socket.io");
 
+
 const app = express();
 const server = http.createServer(app);
 
@@ -111,6 +112,7 @@ app.post("/api/translate", async (req, res) => {
 app.get("/", (req, res) => res.send("Welcome to the WebSocket and HTTP server!"));
 app.use((req, res) => res.status(404).send("404 - Not Found"));
 const path = require("path");
+
 // Serve frontend build in production
 if (process.env.NODE_ENV === "production") {
   const clientBuildPath = path.join(__dirname, "../client/build");
@@ -119,10 +121,6 @@ if (process.env.NODE_ENV === "production") {
   app.get("*", (req, res) => {
     res.sendFile(path.join(clientBuildPath, "index.html"));
   });
-}
-else
-{
-  app.get("/", (req, res) => res.send("Welcome to the WebSocket and HTTP server!"));
 }
 
 server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

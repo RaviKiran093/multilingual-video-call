@@ -2,6 +2,7 @@
   "dependencies": {
     "franc": "^6.2.0",
     "google-translate-api-browser": "^5.0.0",
+    "http-proxy-agent": "^7.0.2",
     "i18next": "^25.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -10,5 +11,4 @@
   "devDependencies": {
     "json-loader": "^0.5.7"
   }
-  
 }
